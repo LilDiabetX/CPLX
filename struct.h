@@ -17,7 +17,7 @@ typedef struct noeud noeud;
 typedef struct arbre_cartesien arbre_cartesien;
 
 extern noeud *creer_racine(char, int);
-extern noeud *creer_noeud(char, int, noeud *, noeud *, noeud *);
+extern noeud *creer_noeud(char, int, noeud *, noeud *);
 extern bool is_leaf(noeud *);
 extern void destroy_noeud(noeud *);
 extern arbre_cartesien *creer_arbre_vide();
