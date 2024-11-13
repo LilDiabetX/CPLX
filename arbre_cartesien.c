@@ -6,7 +6,7 @@
  * Crée un noeud racine d'un arbre cartésien
  * @param c clef du noeud
  * @param prio priorité du noeud
- * @return un noeud sans fils
+ * @return un noeud sans fils et qui est son propre père
  */
 noeud *creer_racine(char c, int prio){
     noeud * racine = malloc(sizeof(noeud));
@@ -17,6 +17,7 @@ noeud *creer_racine(char c, int prio){
 
     racine->clef = c;
     racine->priorite = prio;
+    racine->pere = racine;
     racine->fils_gauche = NULL;
     racine->fils_droit = NULL;
 
@@ -24,14 +25,12 @@ noeud *creer_racine(char c, int prio){
 }
 
 /**
- * Crée un noeud avec des fils
+ * Crée un noeud sans fils et sans père
  * @param c clef du noeud
  * @param prio priorité du noeud
- * @param gauche fils gauche du noeud créé (peut être NULL)
- * @param droit fils droit du noeud créé (peut être NULL)
  * @return un noeud avec des fils
  */
-noeud *creer_noeud(char c, int prio, noeud *gauche, noeud *droit){
+noeud *creer_feuille(char c, int prio){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
         perror("Problème d'allocation.");
@@ -40,11 +39,39 @@ noeud *creer_noeud(char c, int prio, noeud *gauche, noeud *droit){
 
     new_noeud->clef = c;
     new_noeud->priorite = prio;
+    new_noeud->pere = NULL;
+    new_noeud->fils_gauche = NULL;
+    new_noeud->fils_droit = NULL;
+
+    return new_noeud;
+}
+
+/**
+ * Crée un noeud avec des fils
+ * @param c clef du noeud
+ * @param prio priorité du noeud
+ * @param pere père du noeud
+ * @param gauche fils gauche du noeud créé (peut être NULL)
+ * @param droit fils droit du noeud créé (peut être NULL)
+ * @return un noeud avec des fils
+ */
+/*
+noeud *creer_noeud(char c, int prio, noeud *pere, noeud *gauche, noeud *droit){
+    noeud * new_noeud = malloc(sizeof(noeud));
+    if(new_noeud == NULL){
+        perror("Problème d'allocation.");
+        exit(EXIT_FAILURE);
+    }
+
+    new_noeud->clef = c;
+    new_noeud->priorite = prio;
+    new_noeud->pere = pere;
     new_noeud->fils_gauche = gauche;
     new_noeud->fils_droit = droit;
 
     return new_noeud;
 }
+*/
 
 /**
  * Vérifie si un noeud est une feuille (n'a pas de fils)
@@ -61,10 +88,10 @@ bool isLeaf(noeud *n){
  */
 void destroy_noeud(noeud *n){
     if(n->fils_gauche != NULL){
-        destroy(n->fils_gauche);
+        destroy_noeud(n->fils_gauche);
     }
     if(n->fils_droit != NULL){
-        destroy(n->fils_droit);
+        destroy_noeud(n->fils_droit);
     }
 
     free(n);
@@ -106,6 +133,84 @@ noeud *recherche(arbre_cartesien *a, char clef){
         }
     }
     return NULL;
+}
+
+/**
+ * Insère un noeud dans un arbre cartésien en fonction de sa clef et de sa priorité
+ * @param a arbre cartésien dans lequel on veut insérer le noeud
+ * @param n noeud à insérer
+ * @return true si on a réussi à insérer le noeud, false sinon
+ */
+bool insertion(arbre_cartesien *a, noeud *n){
+    if(!isLeaf(n)){
+        return false;
+    }
+    noeud *actuel = a->racine;
+    while(!isLeaf(actuel)){
+        if(actuel->clef == n->clef || actuel->priorite == n->priorite){
+            return false;
+        }
+        else if(actuel->clef > n->clef){
+            actuel = actuel->fils_gauche;
+        }
+        else if(actuel->clef < n->clef){
+            actuel = actuel->fils_droit;
+        }
+    }
+    if(actuel->clef == n->clef || actuel->priorite == n->priorite){
+        return false;
+    }
+    else if(actuel->clef > n->clef){
+        actuel->fils_gauche = n;
+        n->pere = actuel;
+    }
+    else if(actuel->clef < n->clef){
+        actuel->fils_droit = n;
+        n->pere = actuel;
+    }
+    rotations(n);
+    return true;
+}
+
+/**
+ * effectue les rotations nécessaires pour conserver la propriété de tas de l'arbre cartésien dans lequel se trouve le noeud
+ * @param n noeud à partir duquel on veut effectuer les rotations
+ */
+void rotations(noeud *n){
+    noeud *parent = n->pere;
+    while(parent->priorite > n->priorite){
+        if(parent->fils_gauche == n){
+            rotation_droite(parent, n);
+        }
+        else{
+            rotation_gauche(parent, n);
+        }
+        parent = n->pere;
+    }
+}
+
+/**
+ * effectue une rotation vers la droite du sous arbre
+ * @param pere racine du sous arbre
+ * @param n fils avec lequel effectuer la rotation
+ */
+void rotation_droite(noeud *pere, noeud *n){
+    pere->fils_gauche = n->fils_droit;
+    n->pere = pere->pere;
+    n->fils_droit = pere;
+    pere->pere = n;
+}
+
+/**
+ * effectue une rotation vers la gauche du sous arbre
+ * @param pere racine du sous arbre
+ * @param n fils avec lequel effectuer la rotation
+ */
+void rotation_gauche(noeud *pere, noeud *n){
+    pere->fils_droit = n->fils_gauche;
+    n->pere = pere->pere;
+    n->fils_gauche = pere;
+    pere->pere = n;
 }
 
 /**
