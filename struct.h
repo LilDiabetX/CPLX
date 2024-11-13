@@ -23,7 +23,7 @@ extern noeud *creer_feuille(char, int);
 extern bool is_leaf(noeud *);
 extern void destroy_noeud(noeud *);
 extern arbre_cartesien *creer_arbre_vide();
-extern noeud *recherche(arbre_cartesien *, int);
+extern noeud *recherche(arbre_cartesien *, char);
 extern bool insertion(arbre_cartesien *, noeud *);
 extern void rotations(noeud *);
 extern void rotation_droite(noeud *, noeud *);
