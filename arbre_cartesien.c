@@ -8,7 +8,7 @@
  * @param prio priorité du noeud
  * @return un noeud sans fils et qui est son propre père
  */
-noeud *creer_racine(char c, int prio){
+noeud *creer_racine(char c, double prio){
     noeud * racine = malloc(sizeof(noeud));
     if(racine == NULL){
         perror("Problème d'allocation.");
@@ -30,7 +30,7 @@ noeud *creer_racine(char c, int prio){
  * @param prio priorité du noeud
  * @return un noeud avec des fils
  */
-noeud *creer_feuille(char c, int prio){
+noeud *creer_feuille(char c, double prio){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
         perror("Problème d'allocation.");
@@ -56,7 +56,7 @@ noeud *creer_feuille(char c, int prio){
  * @return un noeud avec des fils
  */
 /*
-noeud *creer_noeud(char c, int prio, noeud *pere, noeud *gauche, noeud *droit){
+noeud *creer_noeud(char c, double prio, noeud *pere, noeud *gauche, noeud *droit){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
         perror("Problème d'allocation.");

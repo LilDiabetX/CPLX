@@ -4,7 +4,7 @@
 
 struct noeud{
     char clef;                    // Clef du noeud 
-    int priorite;                 // Priorité du noeud
+    double priorite;                 // Priorité du noeud
     struct noeud *pere;           // Père du noeud
     struct noeud *fils_gauche;    // Pointeur vers le fils gauche
     struct noeud *fils_droit;     // Pointeur vers le fils droit
@@ -17,8 +17,8 @@ struct arbre_cartesien{
 typedef struct noeud noeud;
 typedef struct arbre_cartesien arbre_cartesien;
 
-extern noeud *creer_racine(char, int);
-extern noeud *creer_feuille(char, int);
+extern noeud *creer_racine(char, double);
+extern noeud *creer_feuille(char, double);
 // extern noeud *creer_noeud(char, int, noeud *, noeud *, noeud *);
 extern bool is_leaf(noeud *);
 extern void destroy_noeud(noeud *);
