@@ -214,6 +214,35 @@ void rotation_gauche(noeud *pere, noeud *n){
 }
 
 /**
+ * supprime un noeud d'un arbre cartésien en conservant les propriétés d'arbre de recherche et de tas
+ * @param a arbre duquel on veut supprimer un noeud
+ * @param c clef du noeud qu'on veut supprimer
+ * @return true si on a supprimé le noeud de l'arbre, false sinon
+ */
+bool suppression(arbre_cartesien *a, char c){
+    noeud *n = recherche(a, c);
+    if(n == NULL){
+        return false;
+    }
+    while(!isLeaf(n)){
+        if(n->fils_gauche != NULL){
+            rotation_droite(n, n->fils_gauche);
+        }
+        else{
+            rotation_gauche(n, n->fils_droit);
+        }
+    }
+    if(n->pere->fils_gauche == n){
+        n->pere->fils_gauche = NULL;
+    }
+    else{
+        n->pere->fils_droit = NULL;
+    }
+    destroy_noeud(n);
+    return true;
+}
+
+/**
  * Libère un arbre de la mémoire
  * @param a arbre à libérer de la mémoire
  */

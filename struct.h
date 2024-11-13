@@ -28,7 +28,7 @@ extern bool insertion(arbre_cartesien *, noeud *);
 extern void rotations(noeud *);
 extern void rotation_droite(noeud *, noeud *);
 extern void rotation_gauche(noeud *, noeud *);
-extern bool suppression(arbre_cartesien *, noeud *);
+extern bool suppression(arbre_cartesien *, char);
 extern void destroy_arbre(arbre_cartesien *);
 
 
