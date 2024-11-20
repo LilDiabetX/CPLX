@@ -225,8 +225,16 @@ bool suppression(arbre_cartesien *a, char c){
         return false;
     }
     while(!isLeaf(n)){
-        if(n->fils_gauche != NULL){
-            rotation_droite(n, n->fils_gauche);
+        if(n->fils_gauche != NULL && n->fils_droit != NULL){
+            if(n->fils_gauche->priorite < n->fils_droit->priorite){
+                rotation_droite(n, n->fils_gauche);
+            }
+            else{
+                rotation_gauche(n, n->fils_droit);
+            }
+        }
+        else if(n->fils_gauche != NULL){
+            rotation_droite(n, n->fils_droit);
         }
         else{
             rotation_gauche(n, n->fils_droit);
