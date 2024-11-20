@@ -1,9 +1,10 @@
 #ifndef STRUCT_H
 #define STRUCT_H
-#include<stdbool.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 struct noeud{
-    char clef;                    // Clef du noeud 
+    uint32_t clef;                    // Clef du noeud 
     double priorite;                 // Priorité du noeud
     struct noeud *pere;           // Père du noeud
     struct noeud *fils_gauche;    // Pointeur vers le fils gauche
@@ -17,8 +18,8 @@ struct arbre_cartesien{
 typedef struct noeud noeud;
 typedef struct arbre_cartesien arbre_cartesien;
 
-extern noeud *creer_racine(char, double);
-extern noeud *creer_feuille(char, double);
+extern noeud *creer_racine(uint32_t, double);
+extern noeud *creer_feuille(uint32_t, double);
 // extern noeud *creer_noeud(char, int, noeud *, noeud *, noeud *);
 extern bool is_leaf(noeud *);
 extern void destroy_noeud(noeud *);

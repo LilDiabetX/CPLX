@@ -8,7 +8,7 @@
  * @param prio priorité du noeud
  * @return un noeud sans fils et qui est son propre père
  */
-noeud *creer_racine(char c, double prio){
+noeud *creer_racine(uint32_t c, double prio){
     noeud * racine = malloc(sizeof(noeud));
     if(racine == NULL){
         perror("Problème d'allocation.");
@@ -30,7 +30,7 @@ noeud *creer_racine(char c, double prio){
  * @param prio priorité du noeud
  * @return un noeud avec des fils
  */
-noeud *creer_feuille(char c, double prio){
+noeud *creer_feuille(uint32_t c, double prio){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
         perror("Problème d'allocation.");
@@ -93,7 +93,7 @@ void destroy_noeud(noeud *n){
     if(n->fils_droit != NULL){
         destroy_noeud(n->fils_droit);
     }
-
+    printf("%d\n", n->clef);
     free(n);
 }
 
@@ -135,6 +135,10 @@ noeud *recherche(arbre_cartesien *a, char clef){
     return NULL;
 }
 
+bool isEmpty(arbre_cartesien *a){
+    return a->racine == NULL;
+}
+
 /**
  * Insère un noeud dans un arbre cartésien en fonction de sa clef et de sa priorité
  * @param a arbre cartésien dans lequel on veut insérer le noeud
@@ -145,16 +149,32 @@ bool insertion(arbre_cartesien *a, noeud *n){
     if(!isLeaf(n)){
         return false;
     }
+    if(isEmpty(a)){
+        a->racine = n;
+        return true;
+    }
     noeud *actuel = a->racine;
     while(!isLeaf(actuel)){
         if(actuel->clef == n->clef || actuel->priorite == n->priorite){
             return false;
         }
-        else if(actuel->clef > n->clef){
+        else if(actuel->clef > n->clef && actuel->fils_gauche != NULL){
             actuel = actuel->fils_gauche;
         }
-        else if(actuel->clef < n->clef){
+        else if(actuel->clef < n->clef && actuel->fils_droit != NULL){
             actuel = actuel->fils_droit;
+        }
+        else if(actuel->clef > n->clef){
+            actuel->fils_gauche = n;
+            n->pere = actuel;
+            rotations(n);
+            return true;
+        }
+        else if(actuel->clef < n->clef){
+            actuel->fils_droit = n;
+            n->pere = actuel;
+            rotations(n);
+            return true;
         }
     }
     if(actuel->clef == n->clef || actuel->priorite == n->priorite){
@@ -196,7 +216,12 @@ void rotations(noeud *n){
  */
 void rotation_droite(noeud *pere, noeud *n){
     pere->fils_gauche = n->fils_droit;
-    n->pere = pere->pere;
+    if(pere->pere != pere){
+        n->pere = pere->pere;
+    }
+    else{
+        n->pere = n;
+    }
     n->fils_droit = pere;
     pere->pere = n;
 }
@@ -208,7 +233,12 @@ void rotation_droite(noeud *pere, noeud *n){
  */
 void rotation_gauche(noeud *pere, noeud *n){
     pere->fils_droit = n->fils_gauche;
-    n->pere = pere->pere;
+    if(pere->pere != pere){
+        n->pere = pere->pere;
+    }
+    else{
+        n->pere = n;
+    }
     n->fils_gauche = pere;
     pere->pere = n;
 }
@@ -254,10 +284,9 @@ bool suppression(arbre_cartesien *a, char c){
  * Libère un arbre de la mémoire
  * @param a arbre à libérer de la mémoire
  */
-void destroy_arbre(arbre_cartesien * a){
+void destroy_arbre(arbre_cartesien *a){
     if(a->racine != NULL){
         destroy_noeud(a->racine);
     }
-
     free(a);
 }
