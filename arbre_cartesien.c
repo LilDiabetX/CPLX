@@ -208,23 +208,25 @@ void rotations(arbre_cartesien *a, noeud *n){
  * @param n fils avec lequel effectuer la rotation
  */
 void rotation_droite(arbre_cartesien *a, noeud *pere, noeud *n){
-    pere->fils_gauche = n->fils_droit;
     if(pere->pere != pere){
         n->pere = pere->pere;
+        if(pere->pere->fils_droit == pere){
+            pere->pere->fils_droit = n;
+        }
+        else{
+            pere->pere->fils_gauche = n;
+        }
     }
     else{
         n->pere = n;
         a->racine = n;
     }
-    if(n->fils_droit != NULL){
-        pere->fils_gauche = n->fils_droit;
-        n->fils_droit->pere = pere;
-    }
-    else{
-        pere->fils_droit = NULL;
-    }
-    n->fils_droit = pere;
     pere->pere = n;
+    pere->fils_gauche = n->fils_droit;
+    if(pere->fils_gauche != NULL){
+        pere->fils_gauche->pere = pere;
+    }
+    n->fils_droit = pere;  
 }
 
 /**
@@ -233,23 +235,25 @@ void rotation_droite(arbre_cartesien *a, noeud *pere, noeud *n){
  * @param n fils avec lequel effectuer la rotation
  */
 void rotation_gauche(arbre_cartesien *a, noeud *pere, noeud *n){
-    pere->fils_droit = n->fils_gauche;
     if(pere->pere != pere){
         n->pere = pere->pere;
+        if(pere->pere->fils_droit == pere){
+            pere->pere->fils_droit = n;
+        }
+        else{
+            pere->pere->fils_gauche = n;
+        }
     }
     else{
         n->pere = n;
         a->racine = n;
     }
-    if(n->fils_gauche != NULL){
-        pere->fils_droit = n->fils_gauche;
-        n->fils_gauche->pere = pere;
-    }
-    else{
-        pere->fils_droit = NULL;
+    pere->pere = n;
+    pere->fils_droit = n->fils_gauche;
+    if(pere->fils_droit != NULL){
+        pere->fils_droit->pere = pere;
     }
     n->fils_gauche = pere;
-    pere->pere = n;
 }
 
 /**
