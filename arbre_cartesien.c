@@ -3,25 +3,17 @@
 #include "struct.h"
 
 /**
- * Crée un noeud racine d'un arbre cartésien
- * @param c clef du noeud
- * @param prio priorité du noeud
- * @return un noeud sans fils et qui est son propre père
+ * Affiche les clefs des noeuds d'un sous arbre selon un parcours préfixe
+ * @param n racine du sous arbre
  */
-noeud *creer_racine(uint32_t c, double prio){
-    noeud * racine = malloc(sizeof(noeud));
-    if(racine == NULL){
-        perror("Problème d'allocation.");
-        exit(EXIT_FAILURE);
+void affiche(noeud *n){
+    printf("actuel : %d pere : %d\n", n->clef, n->pere->clef);
+    if(n->fils_gauche != NULL){
+        affiche(n->fils_gauche);
     }
-
-    racine->clef = c;
-    racine->priorite = prio;
-    racine->pere = racine;
-    racine->fils_gauche = NULL;
-    racine->fils_droit = NULL;
-
-    return racine;
+    if(n->fils_droit != NULL){
+        affiche(n->fils_droit);
+    }
 }
 
 /**
@@ -119,7 +111,7 @@ arbre_cartesien *creer_arbre_vide(){
  * @param clef clef de recherche du noeud
  * @return le noeud avec la clef spécifiée s'il est dans l'arbre, NULL sinon
  */
-noeud *recherche(arbre_cartesien *a, char clef){
+noeud *recherche(arbre_cartesien *a, uint32_t clef){
     noeud *actuel = a->racine;
     while(actuel != NULL){
         if(actuel->clef == clef){
@@ -151,6 +143,7 @@ bool insertion(arbre_cartesien *a, noeud *n){
     }
     if(isEmpty(a)){
         a->racine = n;
+        n->pere = n;
         return true;
     }
     noeud *actuel = a->racine;
@@ -167,13 +160,13 @@ bool insertion(arbre_cartesien *a, noeud *n){
         else if(actuel->clef > n->clef){
             actuel->fils_gauche = n;
             n->pere = actuel;
-            rotations(n);
+            rotations(a, n);
             return true;
         }
         else if(actuel->clef < n->clef){
             actuel->fils_droit = n;
             n->pere = actuel;
-            rotations(n);
+            rotations(a, n);
             return true;
         }
     }
@@ -188,7 +181,7 @@ bool insertion(arbre_cartesien *a, noeud *n){
         actuel->fils_droit = n;
         n->pere = actuel;
     }
-    rotations(n);
+    rotations(a, n);
     return true;
 }
 
@@ -196,14 +189,14 @@ bool insertion(arbre_cartesien *a, noeud *n){
  * effectue les rotations nécessaires pour conserver la propriété de tas de l'arbre cartésien dans lequel se trouve le noeud
  * @param n noeud à partir duquel on veut effectuer les rotations
  */
-void rotations(noeud *n){
+void rotations(arbre_cartesien *a, noeud *n){
     noeud *parent = n->pere;
     while(parent->priorite > n->priorite){
         if(parent->fils_gauche == n){
-            rotation_droite(parent, n);
+            rotation_droite(a, parent, n);
         }
         else{
-            rotation_gauche(parent, n);
+            rotation_gauche(a, parent, n);
         }
         parent = n->pere;
     }
@@ -214,13 +207,21 @@ void rotations(noeud *n){
  * @param pere racine du sous arbre
  * @param n fils avec lequel effectuer la rotation
  */
-void rotation_droite(noeud *pere, noeud *n){
+void rotation_droite(arbre_cartesien *a, noeud *pere, noeud *n){
     pere->fils_gauche = n->fils_droit;
     if(pere->pere != pere){
         n->pere = pere->pere;
     }
     else{
         n->pere = n;
+        a->racine = n;
+    }
+    if(n->fils_droit != NULL){
+        pere->fils_gauche = n->fils_droit;
+        n->fils_droit->pere = pere;
+    }
+    else{
+        pere->fils_droit = NULL;
     }
     n->fils_droit = pere;
     pere->pere = n;
@@ -231,13 +232,21 @@ void rotation_droite(noeud *pere, noeud *n){
  * @param pere racine du sous arbre
  * @param n fils avec lequel effectuer la rotation
  */
-void rotation_gauche(noeud *pere, noeud *n){
+void rotation_gauche(arbre_cartesien *a, noeud *pere, noeud *n){
     pere->fils_droit = n->fils_gauche;
     if(pere->pere != pere){
         n->pere = pere->pere;
     }
     else{
         n->pere = n;
+        a->racine = n;
+    }
+    if(n->fils_gauche != NULL){
+        pere->fils_droit = n->fils_gauche;
+        n->fils_gauche->pere = pere;
+    }
+    else{
+        pere->fils_droit = NULL;
     }
     n->fils_gauche = pere;
     pere->pere = n;
@@ -249,7 +258,7 @@ void rotation_gauche(noeud *pere, noeud *n){
  * @param c clef du noeud qu'on veut supprimer
  * @return true si on a supprimé le noeud de l'arbre, false sinon
  */
-bool suppression(arbre_cartesien *a, char c){
+bool suppression(arbre_cartesien *a, uint32_t c){
     noeud *n = recherche(a, c);
     if(n == NULL){
         return false;
@@ -257,17 +266,17 @@ bool suppression(arbre_cartesien *a, char c){
     while(!isLeaf(n)){
         if(n->fils_gauche != NULL && n->fils_droit != NULL){
             if(n->fils_gauche->priorite < n->fils_droit->priorite){
-                rotation_droite(n, n->fils_gauche);
+                rotation_droite(a, n, n->fils_gauche);
             }
             else{
-                rotation_gauche(n, n->fils_droit);
+                rotation_gauche(a, n, n->fils_droit);
             }
         }
         else if(n->fils_gauche != NULL){
-            rotation_droite(n, n->fils_droit);
+            rotation_droite(a, n, n->fils_droit);
         }
         else{
-            rotation_gauche(n, n->fils_droit);
+            rotation_gauche(a, n, n->fils_droit);
         }
     }
     if(n->pere->fils_gauche == n){
@@ -278,6 +287,85 @@ bool suppression(arbre_cartesien *a, char c){
     }
     destroy_noeud(n);
     return true;
+}
+
+/**
+ * valeur max entre deux entiers
+ * @param a premier entier à comparer
+ * @param b second entier à comparer
+ * @return renvoie la plus grande valeur entre les deux entiers
+ */
+int max(int a, int b){
+    if(a > b){
+        return a;
+    }
+    return b;
+}
+
+/**
+ * Calcule récursivement la hauteur d'un sous arbre
+ * @param n racine du sous arbre
+ * @param acc accumulateur stockant la hauteur déjà calculée
+ * @return renvoie la hauteur d'un noeud dans un arbre
+ */
+int hauteurNoeud(noeud *n, int acc){
+    if(isLeaf(n)){
+        return 1 + acc;
+    }
+    if(n->fils_gauche != NULL && n->fils_droit != NULL){
+        return max(hauteurNoeud(n->fils_gauche, acc + 1), hauteurNoeud(n->fils_droit, acc + 1));
+    }
+    if(n->fils_droit != NULL){
+        return hauteurNoeud(n->fils_droit, acc + 1);
+    }
+    if(n->fils_gauche != NULL){
+        return hauteurNoeud(n->fils_gauche, acc + 1);
+    }
+}
+
+/**
+ * Calcule la hauteur d'un arbre
+ * @param a arbre dont on veut calculer la hauteur
+ * @return renvoie la hauteur de l'arbre
+ */
+int hauteurArbre(arbre_cartesien *a){
+    if(a->racine == NULL){
+        return 0;
+    }
+    return hauteurNoeud(a->racine, 0);
+}
+
+/**
+ * Calcule le nombre de noeud dans un sous arbre
+ * @param n noeud racine du sous arbre
+ * @return renvoie la taille d'un sous arbre
+ */
+int nbNoeuds(noeud *n){
+    if(isLeaf(n)){
+        return 1;
+    }
+    if(n->fils_droit != NULL && n->fils_gauche != NULL){
+        return 1 + nbNoeuds(n->fils_droit) + nbNoeuds(n->fils_gauche);
+    }
+    if(n->fils_droit != NULL){
+        return 1 + nbNoeuds(n->fils_droit);
+    }
+    if(n->fils_gauche != NULL){
+        return 1 + nbNoeuds(n->fils_gauche);
+    }
+}
+
+
+/**
+ * Calcule la taille d'un arbre
+ * @param a arbre dont on veut calculer la taille
+ * @return renvoie la taille d'un arbre
+ */
+int tailleArbre(arbre_cartesien *a){
+    if(a->racine == NULL){
+        return 0;
+    }
+    return nbNoeuds(a->racine);
 }
 
 /**
