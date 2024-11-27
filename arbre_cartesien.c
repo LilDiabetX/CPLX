@@ -48,7 +48,7 @@ noeud *creer_feuille(uint32_t c, double prio){
  * @return un noeud avec des fils
  */
 // Uniquement utilisé pour du debug
-noeud *creer_noeud(char c, double prio, noeud *pere, noeud *gauche, noeud *droit){
+noeud *creer_noeud(uint32_t c, double prio, noeud *pere, noeud *gauche, noeud *droit){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
         perror("Problème d'allocation.");
