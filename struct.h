@@ -19,7 +19,7 @@ typedef struct noeud noeud;
 typedef struct arbre_cartesien arbre_cartesien;
 
 extern noeud *creer_feuille(uint32_t, double);
-extern noeud *creer_noeud(char, int, noeud *, noeud *, noeud *);
+extern noeud *creer_noeud(uint32_t, double, noeud *, noeud *, noeud *);
 extern bool is_leaf(noeud *);
 extern noeud *get_fils_droit(noeud *);
 extern noeud *get_fils_gauche(noeud *);
