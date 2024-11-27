@@ -47,7 +47,7 @@ noeud *creer_feuille(uint32_t c, double prio){
  * @param droit fils droit du noeud créé (peut être NULL)
  * @return un noeud avec des fils
  */
-/*
+// Uniquement utilisé pour du debug
 noeud *creer_noeud(char c, double prio, noeud *pere, noeud *gauche, noeud *droit){
     noeud * new_noeud = malloc(sizeof(noeud));
     if(new_noeud == NULL){
@@ -63,7 +63,6 @@ noeud *creer_noeud(char c, double prio, noeud *pere, noeud *gauche, noeud *droit
 
     return new_noeud;
 }
-*/
 
 /**
  * Vérifie si un noeud est une feuille (n'a pas de fils)
@@ -72,6 +71,30 @@ noeud *creer_noeud(char c, double prio, noeud *pere, noeud *gauche, noeud *droit
  */
 bool isLeaf(noeud *n){
     return n->fils_droit == NULL && n->fils_gauche == NULL;
+}
+
+/**
+ * renvoie le fils droit d'un noeud
+ * @param n noeud dont on veut le fils droit
+ * @return renvoie le fils droit du noeud
+ */
+noeud *get_fils_droit(noeud *n){
+    if(n == NULL){
+        return NULL;
+    }
+    else return n->fils_droit;
+}
+
+/**
+ * renvoie le fils gauche d'un noeud
+ * @param n noeud dont on veut le fils gauche
+ * @return renvoie le fils gauche du noeud
+ */
+noeud *get_fils_gauche(noeud *n){
+    if(n == NULL){
+        return NULL;
+    }
+    else return n->fils_gauche;
 }
 
 /**
@@ -85,7 +108,6 @@ void destroy_noeud(noeud *n){
     if(n->fils_droit != NULL){
         destroy_noeud(n->fils_droit);
     }
-    printf("%d\n", n->clef);
     free(n);
 }
 
@@ -127,6 +149,11 @@ noeud *recherche(arbre_cartesien *a, uint32_t clef){
     return NULL;
 }
 
+/**
+ * Vérifie si un arbre est vide
+ * @param a arbre à tester
+ * @return true si l'arbre est vide false sinon
+ */
 bool isEmpty(arbre_cartesien *a){
     return a->racine == NULL;
 }
@@ -148,7 +175,7 @@ bool insertion(arbre_cartesien *a, noeud *n){
     }
     noeud *actuel = a->racine;
     while(!isLeaf(actuel)){
-        if(actuel->clef == n->clef || actuel->priorite == n->priorite){
+        if(actuel->clef == n->clef){
             return false;
         }
         else if(actuel->clef > n->clef && actuel->fils_gauche != NULL){
@@ -170,7 +197,7 @@ bool insertion(arbre_cartesien *a, noeud *n){
             return true;
         }
     }
-    if(actuel->clef == n->clef || actuel->priorite == n->priorite){
+    if(actuel->clef == n->clef){
         return false;
     }
     else if(actuel->clef > n->clef){
@@ -370,6 +397,43 @@ int tailleArbre(arbre_cartesien *a){
         return 0;
     }
     return nbNoeuds(a->racine);
+}
+
+/**
+ * Vérifie que deux arbre sont identiques
+ * @param a1 premier arbre à comparer
+ * @param a2 second arbre à comparer
+ * @return true si les deux arbres sont identiques
+ */
+bool equalsArbre(arbre_cartesien *a1, arbre_cartesien *a2){
+    if(a1->racine == NULL && a2->racine == NULL){
+        return true;
+    }
+    else if((a1->racine != NULL && a2->racine == NULL) || (a1->racine == NULL && a2->racine != NULL)){
+        return false;
+    }
+    else{
+        return equalsNoeud(a1->racine, a2->racine);
+    }
+}
+
+/**
+ * vérifie que deux noeuds et leurs descendants sont identiques
+ * @param n1 premier noeud à comparer
+ * @param n2 second noeud à comparer
+ * @return renvoie true si les noeuds et leurs descendants sont identiques, false sinon
+ */
+bool equalsNoeud(noeud *n1, noeud *n2){
+    if(n1 == NULL && n2 == NULL){
+        return true;
+    }
+    if((n1 == NULL && n2 != NULL) || (n1 != NULL && n2 == NULL)){
+        return false;
+    }
+    if(n1->clef != n2->clef || n1->priorite != n2->priorite){
+        return false;
+    }
+    return equalsNoeud(n1->fils_gauche, n2->fils_gauche) && equalsNoeud(n1->fils_droit, n2->fils_droit);
 }
 
 /**
