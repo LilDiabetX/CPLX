@@ -361,7 +361,7 @@ int hauteurNoeud(noeud *n, int acc){
  */
 int hauteurArbre(arbre_cartesien *a){
     if(a->racine == NULL){
-        return 0;
+        return -1;
     }
     return hauteurNoeud(a->racine, 0);
 }
