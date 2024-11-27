@@ -341,7 +341,7 @@ int max(int a, int b){
  */
 int hauteurNoeud(noeud *n, int acc){
     if(isLeaf(n)){
-        return 1 + acc;
+        return acc;
     }
     if(n->fils_gauche != NULL && n->fils_droit != NULL){
         return max(hauteurNoeud(n->fils_gauche, acc + 1), hauteurNoeud(n->fils_droit, acc + 1));
@@ -373,7 +373,7 @@ int hauteurArbre(arbre_cartesien *a){
  */
 int nbNoeuds(noeud *n){
     if(isLeaf(n)){
-        return 0;
+        return 1;
     }
     if(n->fils_droit != NULL && n->fils_gauche != NULL){
         return 1 + nbNoeuds(n->fils_droit) + nbNoeuds(n->fils_gauche);
