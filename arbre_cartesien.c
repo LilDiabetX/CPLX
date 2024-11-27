@@ -373,7 +373,7 @@ int hauteurArbre(arbre_cartesien *a){
  */
 int nbNoeuds(noeud *n){
     if(isLeaf(n)){
-        return 1;
+        return 0;
     }
     if(n->fils_droit != NULL && n->fils_gauche != NULL){
         return 1 + nbNoeuds(n->fils_droit) + nbNoeuds(n->fils_gauche);
