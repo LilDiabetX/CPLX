@@ -39,8 +39,15 @@ int main(){
     f4->fils_droit = g4;
     arbre4->racine = h4;
 
+    // Exercice 2
+    printf("Exercice 2\n");
+    noeud *n = recherche(arbre4, 50);
+    assert(n == NULL);
+    n = recherche(arbre4, 1);
+    assert(n == a4);
+
     // Exercice 3.d.1
-    printf("Exercice 3.d.1\n");
+    printf("\nExercice 3.d.1\n");
     noeud *a1 = creer_feuille(1, 5.);
     noeud *b1 = creer_feuille(2, 3.);
     noeud *c1 = creer_feuille(3, 8.);
