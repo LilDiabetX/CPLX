@@ -141,11 +141,11 @@ int main(){
     // Exercice 5
     srand(time(NULL));
     arbre_cartesien *arbre5 = creer_arbre_vide();
-    double prio = (rand() % 10000) / 10000.0;
+    double prio = (rand() % 1000000) / 1000000.0;
     noeud *racine = creer_feuille(0, prio);
     insertion(arbre5, racine);
     for(int i = 1; i < 1000000; i++){
-        prio = (rand() % 10000) / 10000.0;
+        prio = (rand() % 1000000) / 1000000.0;
         noeud *n = creer_feuille(i, prio);
         if(!insertion(arbre5, n)){
             printf("echec d'insertion %d\n", i);
