@@ -114,7 +114,31 @@ int main(){
     noeud *i3 = creer_feuille(9, 10.);
     noeud *j3 = creer_feuille(10, 12.);
 
+    noeud *b6 = creer_feuille(2, 3.);
+    noeud *c6 = creer_feuille(3, 8.);
+    noeud *d6 = creer_feuille(4, 2.);
+    noeud *e6 = creer_feuille(5, 6.);
+    noeud *f6 = creer_feuille(6, 7.);
+    noeud *g6 = creer_feuille(7, 9.);
+    noeud *i6 = creer_feuille(9, 10.);
+
     arbre_cartesien *arbre3 = creer_arbre_vide();
+    arbre_cartesien *arbre6 = creer_arbre_vide();
+
+    d6->pere = d6;
+    d6->fils_gauche = b6;
+    d6->fils_droit = e6;
+    b6->pere = d6;
+    e6->pere = d6;
+    b6->fils_droit = c6;
+    c6->pere = b6;
+    e6->fils_droit = f6;
+    f6->pere = e6;
+    f6->fils_droit = g6;
+    g6->pere = f6;
+    g6->fils_droit = i6;
+    i6->pere = g6;
+    arbre6->racine = d6;
 
     insertion(arbre3, e3);
     insertion(arbre3, h3);
@@ -129,16 +153,21 @@ int main(){
 
     verif = equalsArbre(arbre1, arbre4);
     assert(verif == true);
+    printf("hauteur : %d\ntaille : %d\n", hauteurArbre(arbre3), tailleArbre(arbre3));
     
+    printf("\nExercice 4.d\n");
     suppression(arbre3, 1);
     suppression(arbre3, 10);
     suppression(arbre3, 8);
 
+    verif = equalsArbre(arbre3, arbre6);
+    assert(verif == true);
     printf("hauteur : %d\ntaille : %d\n", hauteurArbre(arbre3), tailleArbre(arbre3));
     destroy_arbre(arbre3);
     destroy_arbre(arbre4);
     
     // Exercice 5
+    printf("\nExercice 5\n");
     srand(time(NULL));
     arbre_cartesien *arbre5 = creer_arbre_vide();
     double prio = (rand() % 1000000) / 1000000.0;
@@ -152,7 +181,7 @@ int main(){
             return(EXIT_FAILURE);
         }
     }
-    printf("réussite\n");
+    printf("réussite d'insertion\n");
     printf("hauteur : %d\ntaille : %d\n", hauteurArbre(arbre5), tailleArbre(arbre5));
     destroy_arbre(arbre5);
     
